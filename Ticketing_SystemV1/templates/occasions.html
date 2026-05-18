@@ -1,0 +1,171 @@
+{# 🎛️ لوحة تحكم المناسبات المركزية الفابريكا - National Motors 🎛️ #}
+{# المناسبات: 'new_year_hijri', 'ramadan', 'eid_fitr', 'eid_adha', 'sham_nessim', 'new_year_gregorian', 'none' #}
+
+{% set ACTIVE_EVENT = 'new_year_gregorian' %} {# 👈 غير الكلمة هنا وشوف السحر #}
+
+{# ========================================== #}
+
+{% if ACTIVE_EVENT != 'none' %}
+    <style>
+        /* بنر التهنئة العلوي - معزول بألوانه الصريحة */
+        .global-eid-banner {
+            direction: rtl !important;
+            text-align: center !important;
+            padding: 10px 20px !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            display: block !important;
+            width: 100% !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            margin: 0 !important;
+        }
+
+        /* 🌟 الطبقة الشبحية: بتتحرك فوق الهيدر الأصلي بدون ما تغير أبعاده أو تزق عناصر الـ flex 🌟 */
+        .header-decoration-overlay {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 60px !important; /* نفس ارتفاع الهيدر التقريبي */
+            pointer-events: none !important; /* الدوسة بتخترق الزينة وتروح للأزرار الحقيقية */
+            z-index: 10px !important;
+            display: flex !important;
+            justify-content: space-around !important; /* توزيع عادل للزينة على طول الشريط */
+            align-items: flex-end !important; /* تدلي الزينة من أسفل الهيدر */
+            padding: 0 10% !important;
+            overflow: visible !important;
+        }
+
+        .deco-item {
+            font-size: 1.4rem !important;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)) !important;
+            animation: gentleSwing 3.5s infinite ease-in-out !important;
+        }
+
+        /* كارت الخروف/الهلال العايم أسفل اليمين في الشاشة ثابت ومحمي */
+        .floating-event-badge {
+            position: fixed !important; 
+            bottom: 25px !important; 
+            right: 25px !important; 
+            background: #ffffff !important; 
+            border-radius: 50px !important; 
+            padding: 8px 18px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+            z-index: 999999 !important; 
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            direction: ltr !important;
+        }
+
+        .avatar-circle {
+            width: 38px !important; height: 38px !important; border-radius: 50% !important; 
+            display: flex !important; align-items: center !important; justify-content: center !important; 
+            font-size: 1.4rem !important; box-shadow: 0 3px 6px rgba(0,0,0,0.05) !important;
+        }
+
+        @keyframes gentleSwing {
+            0%, 100% { transform: rotate(-4deg) translateY(0); }
+            50% { transform: rotate(4deg) translateY(3px); }
+        }
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 2px #facc15); opacity: 0.8; }
+            50% { filter: drop-shadow(0 0 10px #facc15); opacity: 1; }
+        }
+    </style>
+
+    {# 1️⃣ رأس السنة الهجرية (ثيم إسلامي وقور) #}
+    {% if ACTIVE_EVENT == 'new_year_hijri' %}
+        <div class="global-eid-banner" style="background: linear-gradient(45deg, #059669, #0d9488) !important; color: #ffffff !important;">
+            ✨ شركة NATIONAL MOTORS تهنئكم بحلول رأس السنة الهجرية المباركة - كل عام وأنتم بخير ✨
+        </div>
+        <div class="header-decoration-overlay">
+            <span class="deco-item">✨</span><span class="deco-item" style="animation-delay: 0.5s;">🕌</span>
+            <span class="deco-item" style="animation-delay: 1s;">✨</span><span class="deco-item" style="animation-delay: 1.5s;">🕌</span>
+            <span class="deco-item" style="animation-delay: 2s;">✨</span>
+        </div>
+        <div class="floating-event-badge" style="border: 2px solid #0d9488 !important;">
+            <div class="avatar-circle" style="background-color: #ccfbf1;">🕋</div>
+            <div style="text-align: left;"><h6 class="mb-0" style="font-weight: 800; color: #0f172a; font-size: 0.8rem; margin:0;">عام هجري مبارك</h6><small style="color: #0d9488; font-weight: 700; font-size: 0.65rem;">NM Team</small></div>
+        </div>
+
+    {# 2️⃣ شهر رمضان الكريم (فوانيس مدلدلة بتنور برقة) #}
+    {% elif ACTIVE_EVENT == 'ramadan' %}
+        <div class="global-eid-banner" style="background: linear-gradient(45deg, #1e1b4b, #312e81) !important; color: #ffffff !important;">
+            🌙 رمضان كريم - أعاده الله عليكم وعلى أسرة ناشيونال موتورز بالخير واليمن والبركات 🌙
+        </div>
+        <div class="header-decoration-overlay">
+            <span class="deco-item" style="animation: glowPulse 2s infinite ease-in-out !important;">🏮</span>
+            <span class="deco-item" style="animation: glowPulse 2s infinite ease-in-out !important; animation-delay: 0.5s;">🏮</span>
+            <span class="deco-item" style="animation: glowPulse 2s infinite ease-in-out !important; animation-delay: 1s;">🏮</span>
+            <span class="deco-item" style="animation: glowPulse 2s infinite ease-in-out !important; animation-delay: 1.5s;">🏮</span>
+            <span class="deco-item" style="animation: glowPulse 2s infinite ease-in-out !important; animation-delay: 2s;">🏮</span>
+        </div>
+        <div class="floating-event-badge" style="border: 2px solid #eab308 !important;">
+            <div class="avatar-circle" style="background-color: #fef08a;">🌙</div>
+            <div style="text-align: left;"><h6 class="mb-0" style="font-weight: 800; color: #0f172a; font-size: 0.8rem; margin:0;">رمضان كريم</h6><small style="color: #ca8a04; font-weight: 700; font-size: 0.65rem;">NM Team</small></div>
+        </div>
+
+    {# 3️⃣ عيد الفطر المبارك (بلالين وكحك العيد الفخم) #}
+    {% elif ACTIVE_EVENT == 'eid_fitr' %}
+        <div class="global-eid-banner" style="background: linear-gradient(45deg, #6d28d9, #db2777) !important; color: #ffffff !important;">
+            🎈 شركة NATIONAL MOTORS تهنئكم بحلول عيد الفطر المبارك - عساكم من عواده 🎈
+        </div>
+        <div class="header-decoration-overlay">
+            <span class="deco-item">🎈</span><span class="deco-item" style="animation-delay: 0.4s;">🥮</span>
+            <span class="deco-item" style="animation-delay: 0.8s;">🎈</span><span class="deco-item" style="animation-delay: 1.2s;">🥮</span>
+            <span class="deco-item" style="animation-delay: 1.6s;">🎈</span>
+        </div>
+        <div class="floating-event-badge" style="border: 2px solid #db2777 !important;">
+            <div class="avatar-circle" style="background-color: #fbcfe8;">🥮</div>
+            <div style="text-align: left;"><h6 class="mb-0" style="font-weight: 800; color: #0f172a; font-size: 0.8rem; margin:0;">عيد فطر مبارك</h6><small style="color: #be185d; font-weight: 700; font-size: 0.65rem;">NM Team</small></div>
+        </div>
+
+    {# 4️⃣ عيد الأضحى المبارك (الخروف الدائري الشيك) #}
+    {% elif ACTIVE_EVENT == 'eid_adha' %}
+        <div class="global-eid-banner" style="background: linear-gradient(45deg, #0d47a1, #1b5e20) !important; color: #ffffff !important;">
+            🌟 شركة NATIONAL MOTORS تهنئكم بقرب حلول عيد الأضحى المبارك - كل عام وأنتم بخير 🌟
+        </div>
+        <div class="header-decoration-overlay">
+            <span class="deco-item">🐑</span><span class="deco-item" style="animation-delay: 0.6s;">🌾</span>
+            <span class="deco-item" style="animation-delay: 1.2s;">🐑</span><span class="deco-item" style="animation-delay: 1.8s;">🌾</span>
+            <span class="deco-item" style="animation-delay: 2.4s;">🐑</span>
+        </div>
+        <div class="floating-event-badge" style="border: 2px solid #1b5e20 !important;">
+            <div class="avatar-circle" style="background-color: #a3e635;">🐑</div>
+            <div style="text-align: left;"><h6 class="mb-0" style="font-weight: 800; color: #0f172a; font-size: 0.8rem; margin:0;">عيد أضحى مبارك</h6><small style="color: #1b5e20; font-weight: 700; font-size: 0.65rem;">NM Team</small></div>
+        </div>
+
+    {# 5️⃣ عيد شم النسيم (ألوان مبهجة جداً، ورد وبيض ملون) #}
+    {% elif ACTIVE_EVENT == 'sham_nessim' %}
+        <div class="global-eid-banner" style="background: linear-gradient(45deg, #a3e635, #fde047) !important; color: #0f172a !important;">
+            🌸 ناشيونال موتورز تهنئكم بمناسبة شم النسيم - أجازة سعيدة ربيعية مبهجة لكم جميعاً 🌸
+        </div>
+        <div class="header-decoration-overlay">
+            <span class="deco-item">🌸</span><span class="deco-item" style="animation-delay: 0.5s;">🥚</span>
+            <span class="deco-item" style="animation-delay: 1s;">🍀</span><span class="deco-item" style="animation-delay: 1.5s;">🥚</span>
+            <span class="deco-item" style="animation-delay: 2s;">🌸</span>
+        </div>
+        <div class="floating-event-badge" style="border: 2px solid #ea580c !important;">
+            <div class="avatar-circle" style="background-color: #ffe4e6;">🌸</div>
+            <div style="text-align: left;"><h6 class="mb-0" style="font-weight: 800; color: #0f172a; font-size: 0.8rem; margin:0;">شم نسيم سعيد</h6><small style="color: #ea580c; font-weight: 700; font-size: 0.65rem;">NM Team</small></div>
+        </div>
+
+    {# 6️⃣ رأس السنة الميلادية (ثلج وبابا نويل وشجر الكريسماس) #}
+    {% elif ACTIVE_EVENT == 'new_year_gregorian' %}
+        <div class="global-eid-banner" style="background: linear-gradient(45deg, #991b1b, #1e293b) !important; color: #ffffff !important;">
+            ❄️ Happy New Year - شركة NATIONAL MOTORS تتمنى لكم عاماً جديداً مليئاً بالتوفيق والنجاح ❄️
+        </div>
+        <div class="header-decoration-overlay">
+            <span class="deco-item">❄️</span><span class="deco-item" style="animation-delay: 0.5s;">🎄</span>
+            <span class="deco-item" style="animation-delay: 1s;">❄️</span><span class="deco-item" style="animation-delay: 1.5s;">🎄</span>
+            <span class="deco-item" style="animation-delay: 2s;">❄️</span>
+        </div>
+        <div class="floating-event-badge" style="border: 2px solid #b91c1c !important;">
+            <div class="avatar-circle" style="background-color: #fecaca;">🎅</div>
+            <div style="text-align: left;"><h6 class="mb-0" style="font-weight: 800; color: #0f172a; font-size: 0.8rem; margin:0;">Happy New Year</h6><small style="color: #b91c1c; font-weight: 700; font-size: 0.65rem;">NM Team</small></div>
+        </div>
+
+    {% endif %}
+{% endif %}

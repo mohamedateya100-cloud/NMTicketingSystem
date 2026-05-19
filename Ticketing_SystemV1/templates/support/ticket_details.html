@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="display: flex; margin-bottom: 20px;">
+    <a href="{{ url_for('support.index') }}" class="btn btn-outline btn-sm">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 35px;">
+    <div class="card">
+        <div class="card-header"><i class="fas fa-circle-info"></i> Technical Review - Ticket #{{ ticket.id }}</div>
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+                <div><strong>👤 Opened By:</strong> {{ ticket.author.full_name }}</div>
+<div><strong>📍 Branch:</strong> 
+    {{ ticket.author.branch_info.name | replace('المركز الرئيسي', 'Head Office') if ticket.author.branch_info else '---' }}
+</div>
+            </div>
+            <p><strong>📂 Category:</strong> {{ ticket.category_info.sub_category if ticket.category_info else 'N/A' }}</p>
+            <p><strong>📞 Contact Number:</strong> <span dir="ltr">{{ ticket.contact_phone }}</span></p>
+            
+            <hr style="margin: 20px 0;">
+            <p class="fw-bold mb-2">📝 Submitted Description:</p>
+            <div style="background: #fff5f5; padding: 25px; border-radius: 15px; border-left: 5px solid var(--nm-red); line-height: 1.8;">
+                {{ ticket.description }}
+            </div>
+            
+            {% if has_p('can_edit_status') %}
+                {% if ticket.status != 'مغلقة' %}
+                    <form action="{{ url_for('support.ticket_details', ticket_id=ticket.id) }}" method="POST" style="margin-top: 35px;">
+                        <label class="fw-bold small">Update Ticket Status:</label>
+                        <select name="status" required>
+                            <option value="مفتوحة" {% if ticket.status == 'مفتوحة' %}selected{% endif %}>Open</option>
+                            <option value="جاري العمل" {% if ticket.status == 'جاري العمل' %}selected{% endif %}>In Progress</option>
+                            <option value="مغلقة">Resolved / Closed</option>
+                        </select>
+                        <label class="fw-bold small">IT Feedback to Employee:</label>
+                        <textarea name="it_comment" rows="5" placeholder="Write your response here...">{{ ticket.it_comment or '' }}</textarea>
+                        <button type="submit" class="btn btn-danger" style="width: 100%;">Update Ticket & Send Response</button>
+                    </form>
+                {% else %}
+                    <div style="margin-top: 35px; background: #d1fae5; color: #065f46; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold;">
+                        <i class="fas fa-lock"></i> This ticket is Resolved and Locked.
+                    </div>
+                    {% if ticket.it_comment %}
+                    <div style="margin-top: 20px;">
+                        <label class="fw-bold small text-muted">Final Response:</label>
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border-left: 4px solid #10b981;">
+                            {{ ticket.it_comment }}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" style="background: #64748b;"><i class="fas fa-clock-rotate-left"></i> Audit Trail</div>
+        <div class="card-body">
+            <style>
+                /* تعديل اتجاه التايم لاين ليصبح من اليسار */
+                .timeline { border-left: 4px solid #e2e8f0; padding-left: 30px; margin-top: 20px; position: relative; }
+                .timeline-item { position: relative; margin-bottom: 35px; padding-left: 25px; }
+                .timeline-item::after { content: ''; position: absolute; left: -41px; top: 6px; width: 18px; height: 18px; background: var(--nm-red); border: 4px solid white; border-radius: 50%; box-shadow: 0 0 0 4px rgba(223,49,33,0.1); }
+            </style>
+<div class="timeline">
+    {% for log in history %}
+    <div class="timeline-item">
+        <div style="color: var(--nm-blue); font-size: 1.1rem; font-weight: bold;">
+            {% if "إنشاء طلب" in log.action %} Ticket Created
+            {% elif "تغيير الحالة إلى" in log.action %} 
+                Status Changed to {{ log.action.split('إلى')[-1] | replace('مفتوحة', 'Open') | replace('جاري العمل', 'In Progress') | replace('مغلقة', 'Resolved') }}
+            {% else %} {{ log.action }} {% endif %}
+        </div>
+        <small style="color: #64748b;">{{ log.timestamp.strftime('%Y-%m-%d | %I:%M %p') }}</small>
+        <div class="badge" style="background: #f1f5f9; color: #475569; margin-top: 10px;">By: {{ log.user_name }}</div>
+    </div>
+    {% else %}
+    <p style="color: #94a3b8;">No activity logs found.</p>
+    {% endfor %}
+</div>            
+</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

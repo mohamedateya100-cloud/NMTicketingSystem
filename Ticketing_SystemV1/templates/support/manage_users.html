@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}User Management - National Motors{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <span><i class="fas fa-users-gear"></i> User Database Management</span>
+        <button class="btn btn-danger btn-sm" onclick="toggleModal('addUserModal')">
+            <i class="fas fa-user-plus"></i> Add New Employee
+        </button>
+    </div>
+    <div class="card-body p-0" style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Department</th>
+                    <th>Branch</th>
+                    <th>Role</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                {% if u.is_active %}
+                <tr>
+                    <td class="fw-bold">
+                        <a href="{{ url_for('support.user_history', user_id=u.id) }}" style="color: var(--nm-blue); text-decoration: none;">{{ u.full_name }}</a>
+                    </td>
+                    <td>{{ u.username }}</td>
+                    <td>{% if u.dept_info and u.dept_info.is_centralized %}🌍 {% endif %}{{ u.dept_info.name if u.dept_info else '---' }}</td>
+                    <td>{{ u.branch_info.name if u.branch_info else '---' }}</td>
+                    <td><span class="badge" style="background: var(--nm-blue);">{{ u.role.name if u.role else '---' }}</span></td>
+                    <td style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-outline btn-sm" title="Edit User" onclick="toggleModal('editModal{{ u.id }}')"><i class="fas fa-user-edit"></i></button>
+                        <button class="btn btn-outline btn-sm text-warning" title="Reset Password" onclick="toggleModal('resetModal{{ u.id }}')"><i class="fas fa-key"></i></button>
+                        <a href="{{ url_for('support.delete_user', user_id=u.id) }}" class="btn btn-outline btn-sm text-danger" title="Disable Account" onclick="return confirm('Are you sure you want to disable this account?')"><i class="fas fa-user-xmark"></i></a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="addUserModal" class="modal-overlay">
+    <form action="{{ url_for('support.add_user') }}" method="POST" class="modal-card">
+        <div class="card-header" style="background: #10b981;"><i class="fas fa-user-plus"></i> Add New Employee</div>
+        <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div><label class="small fw-bold">Full Name:</label><input type="text" name="full_name" required placeholder="e.g. Ahmed Ali"></div>
+                <div><label class="small fw-bold">Username:</label><input type="text" name="username" required placeholder="e.g. a.ali"></div>
+            </div>
+            <label class="small fw-bold">Official Email:</label>
+            <input type="email" name="email" required placeholder="name@nationalmotorsco.com">
+            <label class="small fw-bold">Password:</label>
+            <input type="password" name="password" required placeholder="Temporary password">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label class="small fw-bold">Branch:</label>
+                    <select name="branch_id">
+                        {% for b in branches %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="small fw-bold">Department:</label>
+                    <select name="department_id">
+                        <option value="">-- No Department --</option>
+                        {% for d in departments %}<option value="{{ d.id }}">{% if d.is_centralized %}🌍 {% endif %}{{ d.name }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <label class="small fw-bold">Role / Permission:</label>
+            <select name="role_id">{% for r in roles %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}</select>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button type="submit" class="btn btn-success" style="flex: 1; justify-content: center;">Save Employee</button>
+                <button type="button" class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="toggleModal('addUserModal')">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% for u in users %}
+<div id="editModal{{ u.id }}" class="modal-overlay">
+    <form action="{{ url_for('support.edit_user', user_id=u.id) }}" method="POST" class="modal-card">
+        <div class="card-header bg-primary">Edit User Profile: {{ u.username }}</div>
+        <div class="card-body">
+            <label class="small fw-bold">Full Name:</label>
+            <input type="text" name="full_name" value="{{ u.full_name }}" required>
+            <label class="small fw-bold">Email:</label>
+            <input type="email" name="email" value="{{ u.email }}" required>
+            <label class="small fw-bold">Branch:</label>
+            <select name="branch_id">{% for b in branches %}<option value="{{ b.id }}" {% if u.branch_id == b.id %}selected{% endif %}>{{ b.name }}</option>{% endfor %}</select>
+            <label class="small fw-bold">Department:</label>
+            <select name="department_id"><option value="">-- No Department --</option>{% for d in departments %}<option value="{{ d.id }}" {% if u.department_id == d.id %}selected{% endif %}>{% if d.is_centralized %}🌍 {% endif %}{{ d.name }}</option>{% endfor %}</select>
+            <label class="small fw-bold">Role:</label>
+            <select name="role_id">{% for r in roles %}<option value="{{ r.id }}" {% if u.role_id == r.id %}selected{% endif %}>{{ r.name }}</option>{% endfor %}</select>
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+                <button type="submit" class="btn btn-primary" style="flex:1;">Update Info</button>
+                <button type="button" class="btn btn-outline" style="flex:1;" onclick="toggleModal('editModal{{ u.id }}')">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="resetModal{{ u.id }}" class="modal-overlay">
+    <form action="{{ url_for('support.reset_password', user_id=u.id) }}" method="POST" class="modal-card" style="width: 400px;">
+        <div class="card-header bg-warning text-dark">Reset Password: {{ u.username }}</div>
+        <div class="card-body">
+            <label class="small fw-bold">New Secure Password:</label>
+            <input type="password" name="new_password" placeholder="Enter new password" required>
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+                <button type="submit" class="btn btn-warning" style="flex:1;">Update Password</button>
+                <button type="button" class="btn btn-outline" style="flex:1;" onclick="toggleModal('resetModal{{ u.id }}')">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endfor %}
+{% endblock %}
